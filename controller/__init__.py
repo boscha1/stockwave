@@ -1,0 +1,1 @@
+from .StockController import stock_blueprint
