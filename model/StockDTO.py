@@ -1,5 +1,6 @@
-class StockDTO:
-    def __init__(self, symbol: str, name: str, price: float):
-        self.symbol = symbol
-        self.name = name
-        self.price = price
+from marshmallow import Schema, fields
+
+class StockDTO(Schema):
+    symbol = fields.Str(required=True)
+    name = fields.Str(required=True)
+    price = fields.Float(required=True)

@@ -1,17 +1,18 @@
 # stock_repository.py
 from config.db import stock_collection
+from util.Singleton import Singleton
 
-class StockRepository:
+class StockRepository(metaclass=Singleton):
     def __init__(self):
         self.stock_collection = stock_collection
 
-    def get_stock(self, symbol):
+    def get_stock_by_symbol(self, symbol):
         return self.stock_collection.find_one({"symbol": symbol})
 
     def get_all_stocks(self):
         return self.stock_collection.find({}, {"_id": 0})
 
-    def add_stock(self, stock):
+    def insert_stock(self, stock):
         self.stock_collection.insert_one(stock)
 
     def update_stock(self, symbol, stock):

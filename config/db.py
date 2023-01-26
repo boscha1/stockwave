@@ -16,8 +16,6 @@ validator = {
     }
 }
 
-# db.create_collection("stocks", validator=validator, validation_level="strict")
-
 # init collections
 stock_collection = db["stocks"]
 user_collection = db["users"]

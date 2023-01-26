@@ -1,9 +1,13 @@
 from model.StockDTO import StockDTO
 from repository.StockRepository import StockRepository
+from util.Singleton import Singleton
 
-class StockService:
+class StockService(metaclass=Singleton):
     def __init__(self):
         self.stock_repository = StockRepository()
+        
+    def get_stock_by_symbol(self, symbol):
+        return self.stock_repository.get_stock_by_symbol(symbol)
 
     def get_all_stocks(self):
         stocks = self.stock_repository.get_all_stocks()
