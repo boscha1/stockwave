@@ -1,4 +1,3 @@
-from model.StockDTO import StockDTO
 from repository.StockRepository import StockRepository
 from util.Singleton import Singleton
 
@@ -13,8 +12,8 @@ class StockService(metaclass=Singleton):
         stocks = self.stock_repository.get_all_stocks()
         return stocks
 
-    def insert_stock(self, stock_dto: StockDTO):
-        self.stock_repository.insert_stock(stock_dto)
+    def insert_stock(self, stock):
+        self.stock_repository.insert_stock(stock)
         
     def insert_all(self):
         self.stock_repository.insert_all()

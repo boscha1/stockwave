@@ -1,10 +1,10 @@
 # stock_repository.py
-from config.db import stock_collection
+from config.db import db
 from util.Singleton import Singleton
 
 class StockRepository(metaclass=Singleton):
     def __init__(self):
-        self.stock_collection = stock_collection
+        self.stock_collection = db.stock
 
     def get_stock_by_symbol(self, symbol):
         return self.stock_collection.find_one({"symbol": symbol})
@@ -13,7 +13,7 @@ class StockRepository(metaclass=Singleton):
         return self.stock_collection.find({}, {"_id": 0})
 
     def insert_stock(self, stock):
-        self.stock_collection.insert_one(stock)
+        self.stock_collection.insert_one(stock, {"$addToSet": {'prices': stock['prices']}})
 
     def update_stock(self, symbol, stock):
         self.stock_collection.update_one({"symbol": symbol}, {"$set": stock})
