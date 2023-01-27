@@ -18,9 +18,13 @@ class StockController(Resource):
         super().__init__()
 
 
-    def get(self):
-        stocks = self.stock_service.get_all_stocks()
-        return create_response(stocks, 200)
+    def get(self, symbol=None):
+        if symbol:
+            stock = self.stock_service.get_stock_by_symbol(symbol)
+            return create_response(stock, 200)
+        else:
+            stocks = self.stock_service.get_all_stocks()
+            return create_response(stocks, 200)
     
     
     def post(self):

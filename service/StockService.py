@@ -20,3 +20,6 @@ class StockService(metaclass=Singleton):
         
     def delete_all(self):
         self.stock_repository.delete_all()
+        
+    def update_stock_price(self, stock_symbol, price_id):
+        self.stock_repository.update_stock(stock_symbol, price_id)

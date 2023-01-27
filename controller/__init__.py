@@ -1,1 +1,2 @@
 from .StockController import stock_blueprint
+from .PriceController import price_blueprint
