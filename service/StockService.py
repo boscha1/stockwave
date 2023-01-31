@@ -9,8 +9,7 @@ class StockService(metaclass=Singleton):
         return self.stock_repository.get_stock_by_symbol(symbol)
 
     def get_all_stocks(self):
-        stocks = self.stock_repository.get_all_stocks()
-        return stocks
+        return self.stock_repository.get_all_stocks()
 
     def insert_stock(self, stock):
         self.stock_repository.insert_stock(stock)

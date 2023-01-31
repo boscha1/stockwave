@@ -7,14 +7,34 @@ class StockRepository(metaclass=Singleton):
         self.stock_collection = db.stock
 
     def get_stock_by_symbol(self, symbol):
-        stock = self.stock_collection.find_one({"symbol": symbol.upper()})
-        return stock
+        # stock = self.stock_collection.find_one({"symbol": symbol.upper()})
+        # # return stock
+        value = list(self.stock_collection.aggregate([{
+            "$lookup": {
+                "from": "stock_price_data",
+                "localField": "symbol",
+                "foreignField": "symbol",
+                "as": "prices"
+            }
+        }, { "$match" : { "symbol" : symbol.upper() } }]))
+        
+        if len(value) == 1:
+            return value[0]
+        return None
 
     def get_all_stocks(self):
-        return self.stock_collection.find({}, {"_id": 0})
+        # return self.stock_collection.find({}, {"_id": 0})
+        return self.stock_collection.aggregate([{
+            "$lookup": {
+                "from": "stock_price_data",
+                "localField": "symbol",
+                "foreignField": "symbol",
+                "as": "prices"
+            }
+        }])
 
     def insert_stock(self, stock):
-        self.stock_collection.insert_one(stock, {"$addToSet": {'prices': stock['prices']}})
+        self.stock_collection.insert_one(stock)
 
     def update_stock(self, symbol, price_id):
         self.stock_collection.update_one({"symbol": symbol.upper()}, {"$push": { "prices": price_id }})

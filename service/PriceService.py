@@ -2,19 +2,31 @@ from repository.PriceRepository import PriceRepository
 from .StockService import StockService
 from util.Singleton import Singleton
 from datetime import datetime as dt
+from exception.NotFoundException import NotFoundException
 
 class PriceService(metaclass=Singleton):
     def __init__(self):
         self.price_repository = PriceRepository()
         self.stock_service = StockService()
+        
+    
+    def get_all_prices(self):
+        return self.price_repository.get_all_prices()
 
-    def insert_price(self, price, stock_symbol):
-        # stock_exists = self.stock_service.get_stock_by_symbol(stock_symbol)
-        # # if not stock_exists:
-        # #     return "A stock with " + stock_symbol + " does not exist"
+    def insert_price(self, price):
+        stock_exists = self.stock_service.get_stock_by_symbol(price["symbol"].upper())
+        if not stock_exists:
+            raise NotFoundException("{0} does not exist".format(price["symbol"].upper()))
+    
+        stock_prices = stock_exists["prices"]        
         price["date"] = dt.strptime(price["date"], '%Y-%m-%d')
-        price_id = self.price_repository.insert_price(price)
-        self.stock_service.update_stock_price(stock_symbol, price_id)
+        
+        if stock_prices is not None:
+            for stock_price in stock_prices:
+                if stock_price["date"] == price["date"]:
+                    raise Exception("Date already exists")        
+                
+        self.price_repository.insert_price(price)
         
     def insert_all(self):
         self.price_repository.insert_all()

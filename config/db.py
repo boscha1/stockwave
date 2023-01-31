@@ -7,7 +7,7 @@ def create_stock_collection():
     stock_validator = {
         "$jsonSchema": {
             "bsonType": "object",
-            "required": ["symbol", "name", "prices"],
+            "required": ["symbol", "name"],
             "properties": {
                 "symbol": {
                     "bsonType": "string",
@@ -16,13 +16,6 @@ def create_stock_collection():
                 "name": {
                     "bsonType": "string",
                     "description": "must be a string and is required"
-                },
-                "prices": {
-                    "bsonType": "array",
-                    "items": {
-                        "bsonType": "objectId",
-                        "description": "must be an objectId and is required"
-                    }
                 }
             }
         }
@@ -40,7 +33,7 @@ def create_price_collection():
     price_validator = {
         "$jsonSchema": {
             "bsonType": "object",
-            "required": ["date", "open_at", "close_at"],
+            "required": ["date", "open_at", "close_at", "symbol"],
             "properties": {
                 "date": {
                     "bsonType": "date",
@@ -53,17 +46,21 @@ def create_price_collection():
                 "close_at": {
                     "bsonType": "double",
                     "description": "must be a float and is required"
+                },
+                "symbol": {
+                    "bsonType": "string",
+                    "description": "must be a string and is required"
                 }
             }
         }
     }
     
     try:
-        db.create_collection("price")
+        db.create_collection("stock_price_data")
     except Exception as e:
         print(e)
         
-    db.command("collMod", "price", validator=price_validator)
+    db.command("collMod", "stock_price_data", validator=price_validator)
 
 create_stock_collection()
 create_price_collection()
