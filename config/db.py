@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+import yfinance as yf
 
 client = MongoClient("mongodb://root:rootpassword@localhost:27017/")
 db = client["stockdb"]

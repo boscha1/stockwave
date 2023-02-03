@@ -1,16 +1,17 @@
 from marshmallow import ValidationError
-from flask import Blueprint, Response
+from flask import Blueprint
+import yfinance as yf
 from bson.json_util import dumps
 from service import PriceService
 from flask_restful import Api, Resource, reqparse
-from exception.NotFoundException import NotFoundException
+from exception.CustomExceptions import NotFoundException
 from util.CreateResponse import create_response
 
 
 price_blueprint = Blueprint("price", __name__)
 api = Api(price_blueprint)
 
-@api.resource('/price/stock/<string:symbol>', '/price')
+@api.resource('/price/<string:symbol>', '/price')
 class PriceController(Resource):
     def __init__(self):
         self.price_service = PriceService()
@@ -24,8 +25,8 @@ class PriceController(Resource):
     
     def get(self):
         prices = self.price_service.get_all_prices()
-        return create_response(prices, 200)       
-        
+        return create_response(prices, 200)
+            
     
     def post(self):
         try:

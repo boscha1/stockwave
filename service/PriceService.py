@@ -2,7 +2,7 @@ from repository.PriceRepository import PriceRepository
 from .StockService import StockService
 from util.Singleton import Singleton
 from datetime import datetime as dt
-from exception.NotFoundException import NotFoundException
+from exception.CustomExceptions import NotFoundException
 
 class PriceService(metaclass=Singleton):
     def __init__(self):

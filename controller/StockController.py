@@ -3,7 +3,7 @@ from flask import Response, Blueprint
 from bson.json_util import dumps
 from service.StockService import StockService
 from flask_restful import Api, Resource, reqparse
-from exception.NotFoundException import NotFoundException
+from exception.CustomExceptions import AlreadyExistsException, InvalidStockException
 from util.CreateResponse import create_response
 
 stock_blueprint = Blueprint("stock", __name__)
@@ -35,18 +35,17 @@ class StockController(Resource):
             return create_response(stock, 201)
         except ValidationError as err:
             return err.messages, 400
-        except NotFoundException as err:
-            return err, 404
+        except AlreadyExistsException as err:
+            return create_response(stock["symbol"] + " already exists", 409)
+        except InvalidStockException as err:
+            return create_response(stock["symbol"] + " is invalid", 400)
         
         
-    def delete(self):
-        self.stock_service.delete_all()
+    def delete(self, symbol=None):
+        if symbol:
+            stock = self.stock_service.get_stock_by_symbol(symbol)
+            self.stock_service.delete_stock(stock["symbol"])
+            return create_response({"message": stock["symbol"] + " deleted"}, 204)
+        else:
+            self.stock_service.delete_all()
         return create_response({"message": "deleted"}, 204)
-
-        
-def create_response(data, status_code):
-    return Response(
-        response=dumps(data),
-        status=status_code,
-        mimetype="application/json"
-    )
