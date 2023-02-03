@@ -1,7 +1,7 @@
 from repository import StockRepository, PriceRepository
 import yfinance as yf
 from util.Singleton import Singleton
-from exception.CustomExceptions import AlreadyExistsException, InvalidStockException
+from exception.CustomExceptions import AlreadyExistsException, InvalidStockException, NotFoundException
 from config import client
 
 class StockService(metaclass=Singleton):
@@ -10,7 +10,9 @@ class StockService(metaclass=Singleton):
         self.price_repository = PriceRepository()
         
     def get_stock_by_symbol(self, symbol):
-        return self.stock_repository.get_stock_by_symbol(symbol)
+        stock = self.stock_repository.get_stock_by_symbol(symbol)
+        if stock is None:
+            raise NotFoundException(symbol)
 
     def get_all_stocks(self):
         return self.stock_repository.get_all_stocks()
@@ -20,9 +22,9 @@ class StockService(metaclass=Singleton):
         symbol = stock["symbol"]
         yahoo_data = yf.download(symbol)
         if self.get_stock_by_symbol(symbol):
-            raise AlreadyExistsException
+            raise AlreadyExistsException(symbol)
         if yahoo_data.empty:
-            raise InvalidStockException
+            raise InvalidStockException(symbol)
         
         prices = []
         for index, row in yahoo_data.iterrows():

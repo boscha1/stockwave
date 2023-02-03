@@ -3,7 +3,7 @@ from flask import Response, Blueprint
 from bson.json_util import dumps
 from service.StockService import StockService
 from flask_restful import Api, Resource, reqparse
-from exception.CustomExceptions import AlreadyExistsException, InvalidStockException
+from exception.CustomExceptions import AlreadyExistsException, InvalidStockException, NotFoundException
 from util.CreateResponse import create_response
 
 stock_blueprint = Blueprint("stock", __name__)
@@ -20,12 +20,15 @@ class StockController(Resource):
 
 
     def get(self, symbol=None):
-        if symbol:
-            stock = self.stock_service.get_stock_by_symbol(symbol)
-            return create_response(stock, 200)
-        else:
-            stocks = self.stock_service.get_all_stocks()
-            return create_response(stocks, 200)
+        try:   
+            if symbol:
+                stock = self.stock_service.get_stock_by_symbol(symbol)
+                return create_response(stock, 200)
+            else:
+                stocks = self.stock_service.get_all_stocks()
+                return create_response(stocks, 200)
+        except NotFoundException as err:
+            return create_response(err.args, 404)
     
     
     def post(self):
@@ -34,18 +37,21 @@ class StockController(Resource):
             self.stock_service.insert_stock(stock)
             return create_response(stock, 201)
         except ValidationError as err:
-            return err.messages, 400
+            return create_response(err.args, 400)
         except AlreadyExistsException as err:
-            return create_response(stock["symbol"] + " already exists", 409)
+            return create_response(err.args, 409)
         except InvalidStockException as err:
-            return create_response(stock["symbol"] + " is invalid", 400)
+            return create_response(err.args, 400)
         
         
     def delete(self, symbol=None):
-        if symbol:
-            stock = self.stock_service.get_stock_by_symbol(symbol)
-            self.stock_service.delete_stock(stock["symbol"])
-            return create_response({"message": stock["symbol"] + " deleted"}, 204)
-        else:
-            self.stock_service.delete_all()
-        return create_response({"message": "deleted"}, 204)
+        try:     
+            if symbol:
+                stock = self.stock_service.get_stock_by_symbol(symbol)
+                self.stock_service.delete_stock(stock["symbol"])
+                return create_response({"message": stock["symbol"] + " deleted"}, 204)
+            else:
+                self.stock_service.delete_all()
+            return create_response({"message": "deleted"}, 204)
+        except NotFoundException as err:
+            return create_response(err.args, 404)

@@ -16,7 +16,7 @@ class PriceService(metaclass=Singleton):
     def insert_price(self, price):
         stock_exists = self.stock_service.get_stock_by_symbol(price["symbol"].upper())
         if not stock_exists:
-            raise NotFoundException("{0} does not exist".format(price["symbol"].upper()))
+            raise NotFoundException(price["symbol"])
     
         stock_prices = stock_exists["prices"]        
         price["date"] = dt.strptime(price["date"], '%Y-%m-%d')
