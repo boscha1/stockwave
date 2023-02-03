@@ -13,6 +13,7 @@ class StockService(metaclass=Singleton):
         stock = self.stock_repository.get_stock_by_symbol(symbol)
         if stock is None:
             raise NotFoundException(symbol)
+        return stock
 
     def get_all_stocks(self):
         return self.stock_repository.get_all_stocks()
@@ -21,7 +22,7 @@ class StockService(metaclass=Singleton):
     def insert_stock(self, stock):
         symbol = stock["symbol"]
         yahoo_data = yf.download(symbol)
-        if self.get_stock_by_symbol(symbol):
+        if self.stock_repository.stock_exists(symbol):
             raise AlreadyExistsException(symbol)
         if yahoo_data.empty:
             raise InvalidStockException(symbol)

@@ -41,3 +41,7 @@ class StockRepository(metaclass=Singleton):
         
     def delete_all(self):
         self.stock_collection.delete_many({})
+        
+    def stock_exists(self, symbol):
+        stock = self.stock_collection.find_one({"symbol": symbol})
+        return stock is not None
