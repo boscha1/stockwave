@@ -42,6 +42,8 @@ class StockController(Resource):
             return create_response(err.args, 409)
         except InvalidStockException as err:
             return create_response(err.args, 400)
+        except Exception as err:
+            return create_response(err.args, 500)
         
         
     def delete(self, symbol=None):
