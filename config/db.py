@@ -37,8 +37,8 @@ def create_price_collection():
             "required": ["date", "open_at", "close_at", "symbol"],
             "properties": {
                 "date": {
-                    "bsonType": "date",
-                    "description": "must be a date and is required"
+                    "bsonType": "string",
+                    "description": "must be a string and is required"
                 },
                 "open_at": {
                     "bsonType": "double",
